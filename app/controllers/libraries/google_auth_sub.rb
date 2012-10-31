@@ -58,38 +58,39 @@ class GoogleAuthSubException < Exception; end
 	     return sessionToken
     end
 
-#Test whether a given session token is valid.
-#return: nil if token is invalid.
-#        A hash if token is valid.
-#         result['target']  
-#         result['secure']
-#         result['scope']
-def getAuthSubTokenInfo(token)
-	res = googleHttpGet(@@google_AuthSubTokenInfo_URI, token)
-	result = {}
-	case res
-	when Net::HTTPSuccess then 
-		result['target'] = res.body.scan(/Target=(.+)/)[0][0]
-		result['secure'] = res.body.scan(/Secure=(.+)/)[0][0]
-		result['scope'] = res.body.scan(/Scope=(.+)/)[0][0]
-	else
-		result = nil
-	end
-	return result
-end
+    #Test whether a given session token is valid.
+    #return: nil if token is invalid.
+    #        A hash if token is valid.
+    #         result['target']  
+    #         result['secure']
+    #         result['scope']
+    
+    def getAuthSubTokenInfo(token)
+	   res = googleHttpGet(@@google_AuthSubTokenInfo_URI, token)
+	   result = {}
+	   case res
+	     when Net::HTTPSuccess then 
+		    result['target'] = res.body.scan(/Target=(.+)/)[0][0]
+		    result['secure'] = res.body.scan(/Secure=(.+)/)[0][0]
+		    result['scope'] = res.body.scan(/Scope=(.+)/)[0][0]
+	     else
+		    result = nil
+	     end
+	       return result
+    end
 
-#Access google server with session token autentification.
-#url: a url string you want to access.
-#token: token to access. if you already set sessin token to GoogleAuthSub object, GoogleAuthSub use it.
-def googleHttpGet(url,token)
-	debug("googleHttpGet. url:#{url}")
-	debug("googleHttpGet. token:#{token}")
+    #Access google server with session token autentification.
+    #url: a url string you want to access.
+    #token: token to access. if you already set sessin token to GoogleAuthSub object, GoogleAuthSub use it.
+    def googleHttpGet(url,token)
+	   debug("googleHttpGet. url:#{url}")
+	   debug("googleHttpGet. token:#{token}")
 
-	url = URI.parse(url)
+	   url = URI.parse(url)
 
-	res = false
-	max_retry_count = 5
-	max_retry_count.times {|retry_count|
+	   res = false
+	   max_retry_count = 5
+	   max_retry_count.times {|retry_count|
 		http = Net::HTTP.new(url.host, url.port)
 		if (443==url.port)
 			http.use_ssl = true 
@@ -115,36 +116,36 @@ def googleHttpGet(url,token)
 		}
 	
 		case res
-		when Net::HTTPSuccess
-			break
-		when Net::HTTPRedirection
-			info("#{retry_count}th redirect...new url:#{res['Location']}")
-			url = URI.parse(res['Location'])
-			next
-		else
-			error("get unexpected responce. res:#{res.code}:#{res.message}")
-			break
+		  when Net::HTTPSuccess
+			 break
+		  when Net::HTTPRedirection
+			 info("#{retry_count}th redirect...new url:#{res['Location']}")
+			 url = URI.parse(res['Location'])
+			 next
+		  else
+			 error("get unexpected responce. res:#{res.code}:#{res.message}")
+			 break
 		end
-	}
-	return res
-end
+	   }
+	   return res
+    end
 
 
-#for debug
-def fatal(msg)
-	@logger.fatal(msg) if (@logger)
-end
-def error(msg)
-	@logger.error(msg) if (@logger)
-end
-def warn(msg)
-	@logger.warn(msg) if (@logger)
-end
-def info(msg)
-	@logger.info(msg) if (@logger)
-end
-def debug(msg)
-	@logger.debug(msg) if (@logger)
-end
+    #for debug
+    def fatal(msg)
+	   @logger.fatal(msg) if (@logger)
+    end
+    def error(msg)
+	   @logger.error(msg) if (@logger)
+    end
+    def warn(msg)
+	   @logger.warn(msg) if (@logger)
+    end
+    def info(msg)
+	   @logger.info(msg) if (@logger)
+    end
+    def debug(msg)
+	   @logger.debug(msg) if (@logger)
+    end
 
 end
