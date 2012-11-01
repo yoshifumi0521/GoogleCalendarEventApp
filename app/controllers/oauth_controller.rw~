@@ -28,17 +28,9 @@ class OauthController < ApplicationController
     single_use_token = params[:token]
     gas = GoogleAuthSub.new()
     token = gas.getSessionToken(single_use_token)
+ 
     res = gas.googleHttpGet('https://www.google.com/calendar/feeds/default/private/full',token)
-    
-    #xmlをパースしてオブジェクト化する。
-    @xmldoc = REXML::Document.new(res.body)
-    logger.debug("aaaaaaaaaaaaaaaaa")
-    logger.debug(@xmldoc.elements[1][1])
-    
-
-
-
-
+    logger.debug(res.body)
 
   end
 

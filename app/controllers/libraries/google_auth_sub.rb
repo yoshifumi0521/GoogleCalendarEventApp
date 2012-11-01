@@ -104,7 +104,8 @@ class GoogleAuthSubException < Exception; end
 		end
 		params = {
 			"Authorization" => %Q(AuthSub token="#{token}"),
-		}
+      
+      }
 		debug("getting content from google...")
 
 		res= http.get( url.request_uri ,params )
