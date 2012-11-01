@@ -20,11 +20,13 @@ class OauthController < ApplicationController
 
   #リダイレクトしてかえってきたらする処理。 
   def callback
-    logger.debug("かえってきたーー")
 
-
-  
-  
+    single_use_token = params[:token]
+    gas = GoogleAuthSub.new()
+    token = gas.getSessionToken(single_use_token)
+ 
+    res = gas.googleHttpGet('https://www.google.com/calendar/feeds/default/private/full',token)
+    logger.debug(res.body.inspect)
   end
 
 
